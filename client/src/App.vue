@@ -1,13 +1,17 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
-    <router-view></router-view>
+    <users></users>
   </div>
 </template>
 
 <script>
+import Test from './components/Test'
+import Users from './components/Users'
 export default {
-  name: 'app'
+  name: 'app',
+  components: {
+    Test, Users
+  }
 }
 </script>
 

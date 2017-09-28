@@ -1,3 +1,25 @@
+<<<<<<< HEAD
+<template>
+  <div class = "app">
+    <headertab></headertab>
+    <router-view></router-view>
+  </div>
+</template>
+
+<script>
+import headertab from './components/HeaderTab'
+import homepage from './components/HomePage'
+export default {
+  name: 'app',
+  components: {
+    headertab, homepage
+  }
+}
+</script>
+<style>
+
+</style>
+=======
 <template>
   <div id="app">
     <users></users>
@@ -25,3 +47,4 @@ export default {
   margin-top: 60px;
 }
 </style>
+>>>>>>> 34c575aa9cdab914bb59a357fbf5d4356afa0c67

@@ -1,3 +1,63 @@
+<<<<<<< HEAD
+<template>
+  <v-app>
+    <div class="users">
+    <h1>Users</h1>
+    <form v-on:submit="addUser">
+    <input type="text" v-model="newUser.name" placeholder="Enter Name">
+    <br />
+    <input type="text" v-model="newUser.email" placeholder="Enter Email">
+    <br />
+    <input type="submit" value="Submit">    
+    </form>
+    <ul>
+        <li v-for="user in users">
+          <input type="checkbox" class="toggle" v-model="user.contacted">
+          <span :class="{contacted: user.contacted}">
+            {{user.name}} : {{user.email}} <button v-on:click="deleteUser(user)">x</button>
+          </span>
+        </li>
+    </ul>
+  </div>
+  </v-app>
+</template>
+<script>
+export default {
+  name: 'users',
+  data () {
+    return {
+      newUser: {},
+      users: []
+    }
+  },
+  methods: {
+    addUser: function (e) {
+      this.users.push({
+        name: this.newUser.name,
+        email: this.newUser.email,
+        contacted: false
+      })
+      e.preventDefault()
+    },
+    deleteUser: function (user) {
+      this.users.splice(this.users.indexOf(user), 1)
+    }
+  },
+  created: function () {
+    this.$http.get('https://jsonplaceholder.typicode.com/users')
+      .then(function (response) {
+        this.users = response.data
+      })
+  },
+  computed: {
+  }
+}
+</script>
+<style scoped>
+  .contacted{
+    text-decoration: line-through;
+  }
+=======
 <template>
   <div class="users">
     <h1>Users</h1>
@@ -55,4 +115,5 @@ export default {
   .contacted{
     text-decoration: line-through;
   }
+>>>>>>> 34c575aa9cdab914bb59a357fbf5d4356afa0c67
 </style>

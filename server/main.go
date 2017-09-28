@@ -157,9 +157,8 @@ func main() {
 	r := mux.NewRouter()
 
 	r.Handle("/auth", j.Authenticate())
-	r.Handle("/talent/{id}", GetTalentIDHandler).Methods("GET")
-	r.Handle("/talents", GetTalentAllHandler).Methods("GET")
-
+	r.Handle("/talent/{id}", j.Secure(GetTalentIDHandler, verifyClaims)).Methods("GET")
+	r.Handle("/talents", j.Secure(GetTalentAllHandler, verifyClaims)).Methods("GET")
 	// r.Handle("/register", RegisterHandler).Methods("POST")
 
 	http.ListenAndServe(":8080", r)

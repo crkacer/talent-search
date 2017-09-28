@@ -2,14 +2,15 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
 	"time"
 
 	. "./models"
-
 	"github.com/gorilla/mux"
+	"github.com/thermokarst/jwt"
 	mgo "gopkg.in/mgo.v2"
 )
 
@@ -87,16 +88,41 @@ var GetTalentIDHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Re
 	}
 })
 
+func auth(email string, password string) error {
+	// Hard-code a user
+	if email != "test" || password != "test" {
+		return errors.New("invalid credentials")
+	}
+	return nil
+}
+
+func setClaims(id string) (map[string]interface{}, error) {
+	currentTime := time.Now()
+	return map[string]interface{}{
+		"iat": currentTime.Unix(),
+		"exp": currentTime.Add(time.Minute * 60 * 24).Unix(),
+	}, nil
+}
+
+func verifyClaims(claims []byte, r *http.Request) error {
+	currentTime := time.Now()
+	var c struct {
+		Iat int64
+		Exp int64
+	}
+	_ = json.Unmarshal(claims, &c)
+	if currentTime.After(time.Unix(c.Exp, 0)) {
+		return errors.New("this token has expired")
+	}
+	return nil
+}
+
 func main() {
 
-	// initiate MongoDB connection
-
 	// clear all the talent records
-
 	col.RemoveAll(nil)
 
 	// Add new talents records
-
 	err := col.Insert(
 		&Talent{ID: "1", Username: "jdoe", Fullname: "John Doe", Email: "jdoe@example.com", Bio: "We shine together", Avatar: "https://google.ca"},
 		&Talent{ID: "2", Username: "mprice", Fullname: "John Doe", Email: "mprice@example.com", Bio: "We shine together", Avatar: "https://google.ca"},
@@ -116,9 +142,21 @@ func main() {
 	}
 	fmt.Println(fmt.Sprintf("Talents count: %d", count))
 
+	// Setup JWT
+	config := &jwt.Config{
+		Secret: "password",
+		Auth:   auth,
+		Claims: setClaims,
+	}
+	j, errJWT := jwt.New(config)
+	if err != nil {
+		panic(errJWT)
+	}
+
 	// new instance gorilla mux router
 	r := mux.NewRouter()
 
+	r.Handle("/auth", j.Authenticate())
 	r.Handle("/talent/{id}", GetTalentIDHandler).Methods("GET")
 	r.Handle("/talents", GetTalentAllHandler).Methods("GET")
 

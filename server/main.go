@@ -6,19 +6,12 @@ import (
 	"log"
 	"net/http"
 	"time"
-	
+
+	. "./models"
+
 	"github.com/gorilla/mux"
 	mgo "gopkg.in/mgo.v2"
 )
-
-type Talent struct {
-	ID       string
-	Username string
-	Fullname string
-	Email    string
-	Bio      string
-	Avatar   string
-}
 
 //const MongoDb details
 
